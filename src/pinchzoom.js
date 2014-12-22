@@ -529,6 +529,17 @@
             },
 
             /**
+             * Removes bound listeners from instance
+             */
+            unbindEvents: function () {
+                console.warn('unbindEvents');
+                // Zepto and jQuery both know about `off`
+                $(window).off('resize', this.update.bind(this));
+                $(this.el).find('img').off('load', this.update.bind(this));
+                this.container.off();
+            },
+
+            /**
              * Updates the css values according to the current zoom factor and offset
              */
             update: function () {
@@ -704,15 +715,18 @@
                 },
                 firstMove = true;
 
-            el.addEventListener('touchstart', function (event) {
+
+            function touchStartHandler (event) {
+                event = event.originalEvent;
                 if(target.enabled) {
                     firstMove = true;
                     fingers = event.touches.length;
                     detectDoubleTap(event);
                 }
-            });
+            }
 
-            el.addEventListener('touchmove', function (event) {
+            function touchMoveHandler (event) {
+                event = event.originalEvent;
                 if(target.enabled) {
                     if (firstMove) {
                         updateInteraction(event);
@@ -737,14 +751,19 @@
 
                     firstMove = false;
                 }
-            });
+            }
 
-            el.addEventListener('touchend', function (event) {
+            function touchEndHandler (event) {
+                event = event.originalEvent;
                 if(target.enabled) {
                     fingers = event.touches.length;
                     updateInteraction(event);
                 }
-            });
+            }
+
+            target.container.on('touchstart', touchStartHandler);
+            target.container.on('touchmove', touchMoveHandler);
+            target.container.on('touchend', touchEndHandler);
         };
 
         return PinchZoom;
