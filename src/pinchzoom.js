@@ -532,11 +532,20 @@
              * Removes bound listeners from instance
              */
             unbindEvents: function () {
-                console.warn('unbindEvents');
                 // Zepto and jQuery both know about `off`
                 $(window).off('resize', this.update.bind(this));
                 $(this.el).find('img').off('load', this.update.bind(this));
                 this.container.off();
+            },
+
+            /**
+             * Removes bound listeners from instance
+             */
+            destroy: function () {
+                this.unbindEvents();
+                this.el && delete this.el;
+                this.options && delete this.options;
+                this.container && delete this.container;
             },
 
             /**
